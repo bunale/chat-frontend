@@ -1,8 +1,6 @@
-# 控制每个缩进级别的空格数
-tabWidth: 4
-# 控制语句是否以分号结束
-semi: false
-# 控制每行的最大字符数
-printWidth: 120
-# 控制是否使用单引号
-singleQuote: true
+{
+    "tabWidth": 4,
+    "semi": false,
+    "printWidth": 120,
+    "singleQuote": true
+}
