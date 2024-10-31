@@ -1,11 +1,22 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
+import { apiService } from './util/api'
+
+let login = () => {
+    apiService.post('/api/user/login', {
+            username: 'admin',
+            password: '123456',
+        })
+        .then((res) => {
+            alert(res.code)
+        })
+}
 </script>
 
 <template>
     <div>
         <div id="parent">
-            <div id="child">hello</div>
+            <button id="child" @click="login">login</button>
         </div>
         <a href="https://vite.dev" target="_blank">
             <img src="/vite.svg" class="logo" alt="Vite logo" />
