@@ -30,7 +30,4 @@
         background-color: red;
     }
 </style>
-<script setup>
-    let a: any = 0
-    console.log(a)
-</script>
+<script setup></script>
