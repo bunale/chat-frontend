@@ -1,5 +1,6 @@
 <template>
     <div>Login</div>
+    <van-button type="success">register</van-button>
 </template>
 
 <style lang="scss" scoped>
