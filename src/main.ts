@@ -10,7 +10,6 @@ import Vant from 'vant'
 // 引入 Vant 样式
 import 'vant/lib/index.css'
 
-
 const app = createApp(App)
 app.use(router)
 app.use(Vant)

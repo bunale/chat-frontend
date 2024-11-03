@@ -1,16 +1,36 @@
 <template>
-    <div>Login</div>
-    <van-button type="success">register</van-button>
+    <van-form @submit="onSubmit">
+        <van-cell-group inset>
+            <van-field
+                v-model="username"
+                name="用户名"
+                label="用户名"
+                placeholder="用户名"
+                :rules="[{ required: true, message: '请填写用户名' }]"
+            />
+            <van-field
+                v-model="password"
+                type="password"
+                name="密码"
+                label="密码"
+                placeholder="密码"
+                :rules="[{ required: true, message: '请填写密码' }]"
+            />
+        </van-cell-group>
+        <div style="margin: 16px">
+            <van-button round block type="primary" native-type="submit"> 提交 </van-button>
+        </div>
+    </van-form>
 </template>
 
 <style lang="scss" scoped>
-div {
-    width: 500px;
-    height: 100px;
-    background-color: red;
-}
-
+    div {
+        width: 500px;
+        height: 100px;
+        background-color: red;
+    }
 </style>
 <script setup>
-
+    let a: any = 0
+    console.log(a)
 </script>
