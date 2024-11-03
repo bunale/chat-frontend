@@ -10,7 +10,9 @@ export default [
         method: 'post',
         response: ({ body }) => {
             const { username, password } = body as User
-            const user = users.find((user) => user.username === username && user.password === password)
+            const user = users.find(
+                (user) => user.username === username && user.password === password
+            )
             if (user) {
                 return {
                     code: 200,

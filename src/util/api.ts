@@ -38,7 +38,7 @@ class ApiService {
                 const message = error.response?.data?.message || '网络错误'
                 console.error('API Error:', message)
                 return Promise.reject(message)
-            },
+            }
         )
     }
 
@@ -48,12 +48,20 @@ class ApiService {
     }
 
     // POST 请求
-    public post<T, D = unknown>(url: string, data?: D, config?: InternalAxiosRequestConfig): Promise<T> {
+    public post<T, D = unknown>(
+        url: string,
+        data?: D,
+        config?: InternalAxiosRequestConfig
+    ): Promise<T> {
         return this.axiosInstance.post<T, T>(url, data, config)
     }
 
     // PUT 请求
-    public put<T, D = unknown>(url: string, data?: D, config?: InternalAxiosRequestConfig): Promise<T> {
+    public put<T, D = unknown>(
+        url: string,
+        data?: D,
+        config?: InternalAxiosRequestConfig
+    ): Promise<T> {
         return this.axiosInstance.put<T, T>(url, data, config)
     }
 

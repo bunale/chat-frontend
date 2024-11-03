@@ -9,10 +9,10 @@ const router = createRouter({
             component: () => import('../components/HomeView.vue'),
         },
         {
-            path: "/login",
-            name: "login",
+            path: '/login',
+            name: 'login',
             component: () => import('@/components/LoginView.vue'),
-        }
+        },
         // 可以添加更多路由...
     ],
 })
