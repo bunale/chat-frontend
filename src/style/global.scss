@@ -1,0 +1,22 @@
+// 重置默认样式
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+// 禁止文字缩放
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+// 解决 iOS 滑动不流畅
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+// 禁止长按链接与图片弹出菜单
+a, img {
+  -webkit-touch-callout: none;
+} 
