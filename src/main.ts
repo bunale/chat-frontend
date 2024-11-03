@@ -3,6 +3,7 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 import '@/style/global.scss'
+import 'normalize.css'
 
 const app = createApp(App)
 app.use(router)
