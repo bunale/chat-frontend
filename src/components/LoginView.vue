@@ -23,11 +23,41 @@
     </van-form>
 </template>
 
-<style lang="scss" scoped>
-    div {
-        width: 500px;
-        height: 100px;
-        background-color: red;
+<style lang="scss" scoped></style>
+<script lang="ts" setup>
+    import { ref } from 'vue'
+    import { apiService } from '@/util/request'
+
+    interface Parent {
+        name: string
+        hello(): void
     }
-</style>
-<script setup></script>
+
+    class Child implements Parent {
+        name: string
+        constructor(name: string) {
+            this.name = name
+        }
+        hello(): void {
+            console.log('hello' + this.name)
+        }
+    }
+
+    const child = new Child('liujie')
+    child.hello()
+
+    const username = ref('')
+    const password = ref('')
+    const onSubmit = () => {
+        console.log('submit', username.value, password.value)
+
+        apiService
+            .post('/api/user/login', {
+                username: username.value,
+                password: password.value,
+            })
+            .then((res: string) => {
+                console.log(res)
+            })
+    }
+</script>

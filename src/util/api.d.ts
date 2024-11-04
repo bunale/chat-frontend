@@ -2,7 +2,7 @@
 
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
 
-class ApiService {
+export class ApiService {
     private axiosInstance: AxiosInstance
 
     constructor() {
@@ -70,5 +70,3 @@ class ApiService {
         return this.axiosInstance.delete<T, T>(url, config)
     }
 }
-
-export const apiService = new ApiService()
