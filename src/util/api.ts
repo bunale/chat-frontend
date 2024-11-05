@@ -2,7 +2,7 @@
 
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
 
-export class ApiService {
+class ApiService {
     private axiosInstance: AxiosInstance
 
     constructor() {
@@ -30,7 +30,11 @@ export class ApiService {
         this.axiosInstance.interceptors.response.use(
             (response: AxiosResponse) => {
                 // 处理响应数据
-                return response.data
+                if (response.data.code === 200) {
+                    return response.data.data
+                } else {
+                    return Promise.reject(response.data)
+                }
             },
             (error) => {
                 // 处理错误
@@ -70,3 +74,5 @@ export class ApiService {
         return this.axiosInstance.delete<T, T>(url, config)
     }
 }
+
+export const apiService = new ApiService()

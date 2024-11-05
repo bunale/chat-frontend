@@ -16,6 +16,9 @@ importers:
             normalize.css:
                 specifier: ^8.0.1
                 version: 8.0.1
+            pinia:
+                specifier: ^2.2.6
+                version: 2.2.6(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3))
             vant:
                 specifier: ^4.9.8
                 version: 4.9.8(vue@3.5.12(typescript@5.6.3))
@@ -2067,6 +2070,21 @@ packages:
         engines: { node: '>=0.10' }
         hasBin: true
 
+    pinia@2.2.6:
+        resolution:
+            {
+                integrity: sha512-vIsR8JkDN5Ga2vAxqOE2cJj4VtsHnzpR1Fz30kClxlh0yCHfec6uoMeM3e/ddqmwFUejK3NlrcQa/shnpyT4hA==,
+            }
+        peerDependencies:
+            '@vue/composition-api': ^1.4.0
+            typescript: '>=4.4.4'
+            vue: ^2.6.14 || ^3.5.11
+        peerDependenciesMeta:
+            '@vue/composition-api':
+                optional: true
+            typescript:
+                optional: true
+
     postcss-px-to-viewport@1.1.1:
         resolution:
             {
@@ -2663,6 +2681,20 @@ packages:
             {
                 integrity: sha512-AyFQ0EVmsOZOlAnxoFOGOq1SQDWAB7C6aqMGS23svWAllfOaxbuFvcT8D1i8z3Gyn8fraVeZNNmN6e9bxxXkKw==,
             }
+
+    vue-demi@0.14.10:
+        resolution:
+            {
+                integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==,
+            }
+        engines: { node: '>=12' }
+        hasBin: true
+        peerDependencies:
+            '@vue/composition-api': ^1.0.0-rc.1
+            vue: ^3.0.0-0 || ^2.6.0
+        peerDependenciesMeta:
+            '@vue/composition-api':
+                optional: true
 
     vue-eslint-parser@9.4.3:
         resolution:
@@ -3832,6 +3864,14 @@ snapshots:
 
     pidtree@0.6.0: {}
 
+    pinia@2.2.6(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3)):
+        dependencies:
+            '@vue/devtools-api': 6.6.4
+            vue: 3.5.12(typescript@5.6.3)
+            vue-demi: 0.14.10(vue@3.5.12(typescript@5.6.3))
+        optionalDependencies:
+            typescript: 5.6.3
+
     postcss-px-to-viewport@1.1.1:
         dependencies:
             object-assign: 4.1.1
@@ -4156,6 +4196,10 @@ snapshots:
             terser: 5.36.0
 
     vscode-uri@3.0.8: {}
+
+    vue-demi@0.14.10(vue@3.5.12(typescript@5.6.3)):
+        dependencies:
+            vue: 3.5.12(typescript@5.6.3)
 
     vue-eslint-parser@9.4.3(eslint@9.14.0):
         dependencies:

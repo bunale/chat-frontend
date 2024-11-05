@@ -18,7 +18,8 @@
             />
         </van-cell-group>
         <div style="margin: 16px">
-            <van-button round block type="primary" native-type="submit"> 提交 </van-button>
+            <van-button round block type="primary" native-type="submit"> 登录 </van-button>
+            <van-button round block type="danger" @click="logout"> 退出 </van-button>
         </div>
     </van-form>
 </template>
@@ -26,20 +27,38 @@
 <style lang="scss" scoped></style>
 <script lang="ts" setup>
     import { ref } from 'vue'
-    import { apiService } from '@/util/request'
+    import * as userApi from '@/api/userApi'
+    import { UserInfo } from '@/types/user'
+    import { useUserStore } from '@/store/userStore'
+    import { useRouter } from 'vue-router'
+    import { showToast } from 'vant'
 
     const username = ref('')
     const password = ref('')
-    const onSubmit = () => {
-        console.log('submit', username.value, password.value)
+    const userStore = useUserStore()
+    const router = useRouter()
 
-        apiService
-            .post('/api/user/login', {
-                username: username.value,
-                password: password.value,
+    const onSubmit = () => {
+        userApi
+            .login(username.value, password.value)
+            .then((res: UserInfo) => {
+                userStore.setUser(res)
+                console.log('login success for ' + userStore.getUsername + ' ' + userStore.isAdmin)
+
+                // 登录成功，跳转至首页
+                router.push('/')
             })
-            .then((res) => {
-                console.log(res)
+            .catch((error) => {
+                showToast({
+                    message: error.message,
+                    type: 'fail',
+                    duration: 2000,
+                })
             })
+    }
+
+    const logout = () => {
+        console.log('logout success for ' + userStore.getUsername)
+        userStore.clearUser()
     }
 </script>

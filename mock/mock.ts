@@ -1,8 +1,8 @@
-import type { User } from '../src/types/user'
+import type { User, UserInfo } from '../src/types/user'
 
-const users: User[] = [
-    { username: 'admin', password: '123456' },
-    { username: 'user', password: '123456' },
+const users: UserInfo[] = [
+    { username: 'admin', password: '123', roleKeys: ['admin'] },
+    { username: 'user', password: '123', roleKeys: ['user'] },
 ]
 export default [
     {
@@ -17,6 +17,7 @@ export default [
                 return {
                     code: 200,
                     message: '登录成功',
+                    data: user,
                 }
             } else {
                 return {
