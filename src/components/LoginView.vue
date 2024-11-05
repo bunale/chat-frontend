@@ -28,24 +28,6 @@
     import { ref } from 'vue'
     import { apiService } from '@/util/request'
 
-    interface Parent {
-        name: string
-        hello(): void
-    }
-
-    class Child implements Parent {
-        name: string
-        constructor(name: string) {
-            this.name = name
-        }
-        hello(): void {
-            console.log('hello' + this.name)
-        }
-    }
-
-    const child = new Child('liujie')
-    child.hello()
-
     const username = ref('')
     const password = ref('')
     const onSubmit = () => {
@@ -56,7 +38,7 @@
                 username: username.value,
                 password: password.value,
             })
-            .then((res: string) => {
+            .then((res) => {
                 console.log(res)
             })
     }

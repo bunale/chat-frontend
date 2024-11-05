@@ -1,3 +1,3 @@
-import { ApiService } from './api'
+import { ApiService } from '@/util/api'
 
 export const apiService = new ApiService()
