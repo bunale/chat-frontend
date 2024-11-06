@@ -19,7 +19,6 @@
         </van-cell-group>
         <div style="margin: 16px">
             <van-button round block type="primary" native-type="submit"> 登录 </van-button>
-            <van-button round block type="danger" @click="logout"> 退出 </van-button>
         </div>
     </van-form>
 </template>
@@ -30,23 +29,28 @@
     import * as userApi from '@/api/userApi'
     import { UserInfo } from '@/types/user'
     import { useUserStore } from '@/store/userStore'
-    import { useRouter } from 'vue-router'
+    import { useRouter, useRoute } from 'vue-router'
     import { showToast } from 'vant'
 
     const username = ref('')
     const password = ref('')
     const userStore = useUserStore()
     const router = useRouter()
+    const route = useRoute()
 
     const onSubmit = () => {
         userApi
             .login(username.value, password.value)
             .then((res: UserInfo) => {
                 userStore.setUser(res)
-                console.log('login success for ' + userStore.getUsername + ' ' + userStore.isAdmin)
 
-                // 登录成功，跳转至首页
-                router.push('/')
+                // 获取重定向地址（如果有）
+                const redirect = route.query.redirect as string
+                // 登录成功后重定向到来源页面或首页
+                router.push(redirect || '/')
+                console.log(
+                    `login success for ${userStore.getUsername}, redirect to ${redirect || '/'}`
+                )
             })
             .catch((error) => {
                 showToast({
@@ -55,10 +59,5 @@
                     duration: 2000,
                 })
             })
-    }
-
-    const logout = () => {
-        console.log('logout success for ' + userStore.getUsername)
-        userStore.clearUser()
     }
 </script>
