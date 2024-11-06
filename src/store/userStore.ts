@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { UserInfo } from '@/types/user'
 
-export const useUserStore = defineStore('user', {
+const USER_KEY = 'user'
+export const useUserStore = defineStore(USER_KEY, {
     state: () => {
         return {
-            user: null as UserInfo | null,
+            user: JSON.parse(localStorage.getItem(USER_KEY) || 'null') as UserInfo | null,
         }
     },
 
@@ -22,10 +23,12 @@ export const useUserStore = defineStore('user', {
     actions: {
         setUser(user: UserInfo) {
             this.user = user
+            localStorage.setItem(USER_KEY, JSON.stringify(user))
         },
         clearUser() {
             console.log('clear user', this.user)
             this.user = null
+            localStorage.removeItem(USER_KEY)
             console.log('clear user', this.user)
         },
     },
