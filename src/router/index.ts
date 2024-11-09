@@ -44,6 +44,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/LoginView.vue'),
         meta: { open: true },
     },
+    {
+        path: '/chat',
+        name: 'chat',
+        component: () => import('@/views/ChatView.vue'),
+        meta: { open: true },
+    },
 ]
 
 const router = createRouter({

@@ -4,12 +4,7 @@
         <header>
             <van-row style="width: 100%">
                 <van-col span="8" class="userInfo">
-                    <van-image
-                        round
-                        width="35px"
-                        height="35px"
-                        src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
-                    />
+                    <van-image round width="35px" height="35px" src="/src/assets/robot.png" />
                     <p class="userName">张三</p>
                 </van-col>
                 <van-col span="8" class="title">
@@ -48,6 +43,8 @@
         display: flex;
         flex-direction: column;
         height: 100vh;
+        width: $maxWidth;
+        margin: 0 auto;
     }
 
     header {
@@ -80,11 +77,14 @@
         }
         .title {
             line-height: $headerHeight;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
+            position: relative;
+            top: 2px;
         }
         .search-icon {
-            font-size: 30px;
+            font-size: 24px;
+            font-weight: bold;
             text-align: right;
             line-height: $headerHeight;
             padding-right: 20px;
@@ -96,6 +96,7 @@
         margin-top: 54px;
         margin-bottom: 50px;
         overflow-y: auto;
-        -webkit-overflow-scrolling: touch; // 添加这行，使 iOS 滚动更流畅
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
     }
 </style>
