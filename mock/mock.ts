@@ -1,8 +1,8 @@
 import type { User, UserInfo } from '../src/types/user'
 
 const users: UserInfo[] = [
-    { username: 'admin', password: '123', roleKeys: ['admin'] },
-    { username: 'user', password: '123', roleKeys: ['user'] },
+    { id: 1, username: 'admin', password: '123', roleKeys: ['admin'] },
+    { id: 2, username: 'user', password: '123', roleKeys: ['user'] },
 ]
 export default [
     {

@@ -3,6 +3,7 @@ import { useUserStore } from '@/store/userStore'
 // 导入相关组件
 import MainLayout from '@/components/layouts/MainLayout.vue'
 import type { RouteRecordRaw } from 'vue-router'
+import VideoCallView from '../views/VideoCallView.vue'
 // 扩展 RouteMeta 类型
 declare module 'vue-router' {
     interface RouteMeta {
@@ -45,11 +46,16 @@ const routes: RouteRecordRaw[] = [
         meta: { open: true },
     },
     {
-        path: '/chat',
+        path: '/chat/:userId/:avatar/:targetName',
         name: 'chat',
         component: () => import('@/views/ChatView.vue'),
         meta: { open: true },
     },
+    {
+        path: '/video-call',
+        name: 'videoCall',
+        component: VideoCallView
+    }
 ]
 
 const router = createRouter({

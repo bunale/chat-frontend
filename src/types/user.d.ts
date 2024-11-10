@@ -4,5 +4,6 @@ export interface User {
 }
 
 export interface UserInfo extends User {
+    id: number,
     roleKeys: string[]
 }
