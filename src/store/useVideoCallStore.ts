@@ -1,31 +1,33 @@
 import { defineStore } from 'pinia'
-
+import { Message } from '@/types/message'
 interface VideoCallState {
     isConnected: boolean
-    targetUserId: number | null
     isSpeakerOn: boolean
-    offerMessage: any
+    targetUserId: number
+    offerMessage: Message<RTCSessionDescriptionInit> | undefined
 }
 
 export const useVideoCallStore = defineStore('videoCall', {
-    state: (): VideoCallState => ({
-        isConnected: false,
-        targetUserId: null,
-        isSpeakerOn: true,
-        offerMessage: null
-    }),
-    
+    state: (): VideoCallState => {
+        return {
+            isConnected: false,
+            isSpeakerOn: false,
+            targetUserId: 0,
+            offerMessage: undefined as Message<RTCSessionDescriptionInit> | undefined,
+        }
+    },
+
     actions: {
         setConnectionState(connected: boolean) {
             this.isConnected = connected
         },
-        
-        setOfferMessage(offerMessage: any) {
+
+        setOfferMessage(offerMessage: Message<RTCSessionDescriptionInit>) {
             this.offerMessage = offerMessage
         },
 
         setTargetUserId(targetUserId: number) {
             this.targetUserId = targetUserId
-        }
-    }
-}) 
+        },
+    },
+})

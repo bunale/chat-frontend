@@ -5,14 +5,23 @@ import pluginVue from 'eslint-plugin-vue'
 // import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default [
-    { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
+    { files: ['**/*.{js,mjs,cjs,ts,vue,d.ts}'] },
     { languageOptions: { globals: globals.browser } },
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     ...pluginVue.configs['flat/essential'],
     {
         files: ['**/*.vue'],
-        languageOptions: { parserOptions: { parser: tseslint.parser } },
+        languageOptions: {
+            parserOptions: { parser: tseslint.parser },
+            globals: {
+                RTCSessionDescriptionInit: true,
+            },
+        },
+        rules: {
+            '@typescript-eslint/no-explicit-any': 'off',
+        },
     },
+
     // eslintConfigPrettier,
 ]

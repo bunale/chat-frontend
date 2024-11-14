@@ -54,8 +54,8 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/video-call',
         name: 'videoCall',
-        component: VideoCallView
-    }
+        component: VideoCallView,
+    },
 ]
 
 const router = createRouter({

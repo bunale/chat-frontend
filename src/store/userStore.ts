@@ -5,7 +5,7 @@ const USER_KEY = 'user'
 export const useUserStore = defineStore(USER_KEY, {
     state: () => {
         return {
-            user: JSON.parse(localStorage.getItem(USER_KEY) || 'null') as UserInfo | null,
+            user: JSON.parse(localStorage.getItem(USER_KEY) as string) as UserInfo | null,
         }
     },
 

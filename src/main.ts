@@ -7,7 +7,7 @@ import '@/styles/viewport.scss'
 import 'normalize.css'
 import { initViewportHeight } from './utils/viewport'
 
-import { useWebScoketStore } from './store/useWebsocketStore';
+import { useWebScoketStore } from './store/useWebsocketStore'
 
 // 初始化视口高度
 initViewportHeight()
@@ -28,6 +28,5 @@ app.use(Vant)
 app.mount('#app')
 
 // 连接websocket
-const webScoketStore = useWebScoketStore();
-webScoketStore.connect();
-
+const webScoketStore = useWebScoketStore()
+webScoketStore.connect()

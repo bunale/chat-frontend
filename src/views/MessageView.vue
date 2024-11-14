@@ -24,14 +24,15 @@
 <script lang="ts" setup>
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
-
+    import cat from '@/assets/cat.png'
+    import dog from '@/assets/dog.png'
     const router = useRouter()
 
     const messageList = ref([
         {
             id: 2,
             name: 'User',
-            avatar: '/src/assets/cat.png',
+            avatar: cat,
             lastMessage: '你好，最近怎么样？',
             time: '14:30',
             unread: 2,
@@ -39,7 +40,7 @@
         {
             id: 4,
             name: '李四',
-            avatar: '/src/assets/dog.png',
+            avatar: dog,
             lastMessage: '周末要一起出去玩吗？',
             time: '昨天',
             unread: 0,
@@ -48,7 +49,7 @@
     ])
 
     const goChat = (userId: number, avatar: string, name: string) => {
-        console.log("goChat: " + userId + ", " + avatar + ", " + name)
+        console.log('goChat: ' + userId + ', ' + avatar + ', ' + name)
         router.push({
             name: 'chat',
             params: { userId: userId, avatar: avatar, targetName: name },
@@ -72,6 +73,7 @@
         justify-content: space-between;
         padding: 0 16px;
         margin-top: 3px;
+
         .avatar {
             margin-right: 12px;
         }

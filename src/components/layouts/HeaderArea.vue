@@ -2,7 +2,7 @@
     <header>
         <van-row style="width: 100%">
             <van-col span="8" class="userInfo">
-                <van-image round width="35px" height="35px" src="/src/assets/robot.png" />
+                <van-image round width="35px" height="35px" :src="robot" />
                 <p class="userName">张三</p>
             </van-col>
             <van-col span="8" class="title">
@@ -14,6 +14,10 @@
         </van-row>
     </header>
 </template>
+
+<script lang="ts" setup>
+    import robot from '@/assets/robot.png'
+</script>
 
 <style lang="scss" scoped>
     header {
@@ -38,12 +42,14 @@
             display: flex;
             align-items: center;
             padding-left: 20px;
+
             .userName {
                 font-size: 14px;
                 padding-top: 10px;
                 margin-left: 8px;
             }
         }
+
         .title {
             line-height: $headerHeight;
             font-size: 18px;
@@ -51,6 +57,7 @@
             position: relative;
             top: 2px;
         }
+
         .plus-icon {
             font-size: 24px;
             font-weight: bold;
@@ -60,4 +67,3 @@
         }
     }
 </style>
-

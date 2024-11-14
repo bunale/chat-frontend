@@ -11,6 +11,7 @@ export default defineConfig({
             mockPath: 'mock',
         }),
     ],
+    base: '/',
     css: {
         preprocessorOptions: {
             scss: {
@@ -23,5 +24,17 @@ export default defineConfig({
             // 设置别名 '@' 指向项目的 src 目录
             '@': path.resolve(__dirname, './src'),
         },
+    },
+    // 配置静态资源处理
+    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
+    build: {
+        // 确保资源正确复制
+        outDir: 'dist',
+        assetsDir: 'assets',
+        // rollupOptions: {
+        //     output: {
+        //         assetFileNames: 'assets/[name].[hash][extname]'
+        //     }
+        // },
     },
 })

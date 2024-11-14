@@ -5,6 +5,7 @@
         "useDefineForClassFields": true,
         "module": "ESNext",
         "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "types": ["webrtc", "@types/dom-webcodecs"],
         "skipLibCheck": true,
 
         /* Bundler mode */
@@ -16,10 +17,11 @@
         "jsx": "preserve",
 
         /* Linting */
-        "strict": true,
+        "strict": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": false,
 
         "composite": true,
         "baseUrl": ".",
@@ -28,5 +30,11 @@
             "@/*": ["src/*"]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/utils/sign-server.js"]
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+        "src/utils/sign-server.js"
+    ]
 }

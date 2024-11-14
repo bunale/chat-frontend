@@ -1,9 +1,6 @@
-export interface User {
+export interface UserInfo {
+    id: number
     username: string
     password: string
-}
-
-export interface UserInfo extends User {
-    id: number,
     roleKeys: string[]
 }

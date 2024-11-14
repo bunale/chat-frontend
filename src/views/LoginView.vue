@@ -48,9 +48,7 @@
                 const redirect = route.query.redirect as string
                 // 登录成功后重定向到来源页面或首页
                 router.push(redirect || '/')
-                console.log(
-                    `login success for ${userStore.user}, redirect to ${redirect || '/'}`
-                )
+                console.log(`login success for ${userStore.user}, redirect to ${redirect || '/'}`)
             })
             .catch((error) => {
                 showToast({

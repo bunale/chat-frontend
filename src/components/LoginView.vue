@@ -26,7 +26,7 @@
 <style lang="scss" scoped></style>
 <script lang="ts" setup>
     import { ref } from 'vue'
-    import { apiService } from '@/util/request'
+    import { apiService } from '@/utils/api'
 
     interface Parent {
         name: string
