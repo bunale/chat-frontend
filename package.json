@@ -33,7 +33,6 @@
         ]
     },
     "dependencies": {
-        "@types/dom-webcodecs": "^0.1.13",
         "@types/webrtc": "^0.0.44",
         "axios": "^1.7.7",
         "eslint-plugin-vue": "^9.30.0",
@@ -46,6 +45,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.13.0",
+        "@types/dom-webcodecs": "^0.1.13",
         "@vitejs/plugin-vue": "^5.1.4",
         "eslint": "^9.14.0",
         "globals": "^15.11.0",
