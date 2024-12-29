@@ -2,7 +2,7 @@
     <div class="message-list">
         <div
             class="message-item"
-            @click="goChat(item.id, item.avatar, item.name)"
+            @click="goChat(item.userId, item.avatar, item.name)"
             v-for="(item, index) in messageList"
             :key="index"
         >
@@ -31,6 +31,7 @@
     const messageList = ref([
         {
             id: 2,
+            userId: '222',
             name: 'User',
             avatar: cat,
             lastMessage: '你好，最近怎么样？',
@@ -39,6 +40,7 @@
         },
         {
             id: 4,
+            userId: '222',
             name: '李四',
             avatar: dog,
             lastMessage: '周末要一起出去玩吗？',
@@ -48,7 +50,7 @@
         // 可以添加更多消息项...
     ])
 
-    const goChat = (userId: number, avatar: string, name: string) => {
+    const goChat = (userId: string, avatar: string, name: string) => {
         console.log('goChat: ' + userId + ', ' + avatar + ', ' + name)
         router.push({
             name: 'chat',

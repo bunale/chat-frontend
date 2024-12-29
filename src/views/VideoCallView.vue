@@ -38,7 +38,8 @@
     import { useWebScoketStore } from '@/store/useWebsocketStore'
     import { useUserStore } from '@/store/userStore'
     import { useVideoCallStore } from '@/store/useVideoCallStore'
-    import { MessageData } from '@/types/message'
+    import { Packet, Offer, Answer, Candidate } from '@/types/message'
+    import Command from '@/common/Command'
 
     const router = useRouter()
     const route = useRoute()
@@ -62,134 +63,147 @@
     // 初始化 WebRTC 连接
     const initWebRTC = async () => {
         try {
-            console.log(
-                'videoCallStore: ',
-                videoCallStore.offerMessage,
-                videoCallStore.targetUserId
-            )
+            console.log('init WebRTC')
+            console.log('videoCallStore: ', JSON.stringify(videoCallStore))
+
+            // 如果有 offerMessage，说明是被呼叫方
             if (videoCallStore.offerMessage) {
-                const targetUserId = videoCallStore.offerMessage.data.from
+                const targetUserId = videoCallStore.offerMessage.message.from
                 // 创建 RTCPeerConnection
-                await createPeerConnection(targetUserId)
+                await initPeerConnection(targetUserId)
+                // 处理 offer
+                await resolveOfferAndSendAnswer(videoCallStore.offerMessage)
+            }
 
-                resolveOffer(videoCallStore.offerMessage)
-
-                // 订阅消息
-                webScoketStore.subscribeHandler('videoCall', messageHandler)
-            } else {
-                // 发送 offer 消息
+            // 如果没有 offerMessage，说明是主叫方
+            else {
+                // 创建WebRTC连接
                 let targetUserId = videoCallStore.targetUserId
-                await createPeerConnection(targetUserId)
+                await initPeerConnection(targetUserId)
+                // 创建 offer，设置为本地会话描述
                 let offer = await peerConnection.value?.createOffer()
                 await peerConnection.value?.setLocalDescription(offer)
-                let data: MessageData<any> = {
-                    sign: 'offer',
-                    from: userStore.user?.id as number,
-                    to: targetUserId,
-                    data: offer as RTCSessionDescriptionInit,
+                // 发送Offer到信令服务器
+                let packet: Packet<Offer> = {
+                    command: Command.OFFER,
+                    message: {
+                        from: userStore.user?.userId,
+                        to: targetUserId,
+                        data: offer,
+                    },
                 }
-                webScoketStore.sendMessage({
-                    scene: 'videoCall',
-                    data,
-                })
-                console.log('send offer: ', data)
-                webScoketStore.subscribeHandler('videoCall', messageHandler)
+                webScoketStore.sendMessage(packet)
+                console.log('send offer: ', packet)
+
+                // 订阅Answer信令
+                await webScoketStore.subscribeHandler(Command.ANSWER, messageHandler)
             }
+
+            // 不管是主叫方还是被呼叫方，都订阅ICE候选信令消息
+            webScoketStore.subscribeHandler(Command.ICE_CANDIDATE, messageHandler)
         } catch (err) {
             console.error('Error initializing WebRTC:', err)
         }
     }
 
-    async function createPeerConnection(targetUserId: number) {
+    /**
+     * 创建并初始化 RTCPeerConnection 连接
+     * @param targetUserId  目标用户 ID
+     */
+    async function initPeerConnection(targetUserId: string) {
+        // 创建 RTCPeerConnection
         peerConnection.value = new RTCPeerConnection(configuration)
 
-        // 获取本地媒体流
+        /*
+            处理本地媒体流
+            1. 获取本地媒体流
+            2. 将本地媒体流所有轨道添加到 peerConnection
+            3. 将本地媒体流输出到 Local Video 标签
+        */
         const stream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true,
         })
-        // 重要：将所有轨道添加到 peer connection
         stream.getTracks().forEach((track) => {
             peerConnection.value?.addTrack(track, stream)
         })
-        // 设置本地视频流
         if (localVideo.value) {
             localVideo.value.srcObject = stream
         }
-        // 处理远程流
+
+        // 将远程媒体流输出到Remote Video标签
         peerConnection.value.ontrack = (event) => {
             console.log('remote ontrack: ', event)
             if (remoteVideo.value) {
                 remoteVideo.value.srcObject = event.streams[0]
             }
         }
-        // 处理 ICE 候选
+
+        // 将收集到的ICE候选发送至信令服务器
         peerConnection.value.onicecandidate = (event) => {
             console.log('ICE candidate: ', event.candidate)
             if (event.candidate) {
-                const data = {
-                    sign: 'candidate',
-                    from: userStore.user?.id as number,
-                    to: targetUserId,
-                    data: event.candidate,
-                }
-                // 发送 ICE candidate 到信令服务器
                 webScoketStore.sendMessage({
-                    scene: 'videoCall',
-                    data,
+                    command: Command.ICE_CANDIDATE,
+                    message: {
+                        from: userStore.user?.userId,
+                        to: targetUserId,
+                        data: event.candidate,
+                    },
                 })
-                console.log('send candidate: ', data)
             }
         }
     }
 
+    /**
+     * 信令消息处理器
+     */
     const messageHandler = {
-        handle: async (message) => {
-            console.log('Received message:', message)
-            if (message.data.sign === 'answer') {
-                console.log('Processing answer')
-                try {
+        handle: async (packet: Packet<unknown>) => {
+            console.log('Processing packet: ', packet.command)
+            switch (packet.command) {
+                case Command.OFFER:
+                    await resolveOfferAndSendAnswer(packet as Packet<Offer>)
+                    break
+                case Command.ANSWER:
                     await peerConnection.value?.setRemoteDescription(
-                        new RTCSessionDescription(message.data.data)
+                        new RTCSessionDescription((packet as Packet<Answer>).message.data)
                     )
-                } catch (e) {
-                    console.error('Error setting remote description:', e)
-                }
-            } else if (message.data.sign === 'offer') {
-                console.log('Processing offer')
-                await resolveOffer(message)
-            } else if (message.data.sign === 'candidate') {
-                console.log('Processing ICE candidate')
-                try {
+                    break
+                case Command.ICE_CANDIDATE:
                     await peerConnection.value?.addIceCandidate(
-                        new RTCIceCandidate(message.data.data)
+                        new RTCIceCandidate((packet as Packet<Candidate>).message.data)
                     )
-                } catch (e) {
-                    console.error('Error adding ICE candidate:', e)
-                }
+                    break
+                default:
+                    console.log('Unknown command:', packet.command)
             }
         },
     }
 
-    const resolveOffer = async (message: any) => {
-        console.log('receive offer: ', message)
-        let targetUserId = message.data.from
-        await createPeerConnection(targetUserId)
+    /**
+     * 处理 offer 信令, 并发送 answer 信令
+     *
+     * @param packet Packet<Offer>
+     */
+    const resolveOfferAndSendAnswer = async (packet: Packet<Offer>) => {
+        console.log('receive offer: ', packet)
+        let targetUserId = packet.message.from
         await peerConnection.value?.setRemoteDescription(
-            new RTCSessionDescription(message.data.data)
+            new RTCSessionDescription(packet.message.data)
         )
+
         const answer = await peerConnection.value?.createAnswer()
         await peerConnection.value?.setLocalDescription(answer)
-        let data = {
-            sign: 'answer',
-            from: userStore.user?.id,
-            to: targetUserId,
-            data: answer,
+        const data = {
+            command: Command.ANSWER,
+            message: {
+                from: userStore.user?.userId,
+                to: targetUserId,
+                data: answer,
+            },
         }
-        webScoketStore.sendMessage({
-            scene: 'videoCall',
-            data,
-        })
+        webScoketStore.sendMessage(data)
         console.log('send answer: ', data)
     }
 

@@ -87,7 +87,7 @@
     const route = useRoute()
     const chatContent = ref<HTMLElement | null>(null)
     const inputMessage = ref('')
-    const targetUserId = ref(0)
+    const targetUserId = ref('')
     const avatar = ref('')
     const targetName = ref('')
     // 操作菜单相关
@@ -331,7 +331,7 @@
 
     onMounted(() => {
         console.log('router.currentRoute.value.params: ' + JSON.stringify(route.params))
-        targetUserId.value = Number(route.params.userId as string)
+        targetUserId.value = route.params.userId as string
         avatar.value = route.params.avatar as string
         targetName.value = route.params.targetName as string
         scrollToBottom()

@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 import { useUserStore } from './userStore'
 import { useVideoCallStore } from './useVideoCallStore'
 import router from '@/router'
-import { MessageHandler, Message } from '@/types/message'
+import { MessageHandler, Offer, Packet } from '@/types/message'
+import Command from '@/common/Command'
 
 export const useWebScoketStore = defineStore('websocket', {
     state: () => {
@@ -20,57 +21,62 @@ export const useWebScoketStore = defineStore('websocket', {
                 return
             }
 
-            // 订阅视频通话offer消息
-            this.subscribeHandler('videoCall', {
-                handle: async (message: Message<unknown>) => {
-                    const videoCallStore = useVideoCallStore()
-                    if (message.data.sign === 'offer') {
-                        videoCallStore.setOfferMessage(
-                            message as Message<RTCSessionDescriptionInit>
-                        )
-                        router.push({ name: 'videoCall' })
-                    }
-                },
-            })
-
-            console.log('websocket url: ' + 'ws://localhost:8080/' + userStore.user?.id)
-            this.websocket = new WebSocket(
-                import.meta.env.VITE_WEBSOCKET_BASE_URL + userStore.user?.id
-            )
+            console.log('websocket connecting to url: ' + import.meta.env.VITE_WEBSOCKET_BASE_URL)
+            this.websocket = new WebSocket(import.meta.env.VITE_WEBSOCKET_BASE_URL)
             this.websocket.onopen = () => {
+                this.sendMessage({
+                    command: Command.LOGIN,
+                    message: {
+                        userId: userStore.user?.userId,
+                    },
+                })
                 console.log('websocket open')
             }
             this.websocket.onclose = () => {
                 console.log('websocket close')
             }
             this.websocket.onerror = (event) => {
-                console.log('websocket error: ' + event)
+                console.log('websocket error: ' + JSON.stringify(event))
             }
-            // 处理消息
+            // 处理接收到的消息
             this.websocket.onmessage = (event) => {
-                const data: Message<unknown> = JSON.parse(event.data)
-                console.log('receive message: ', data)
-                this.handlers.get(data.scene)?.handle(data)
+                const packet: Packet<unknown> = JSON.parse(event.data)
+                console.log('receive data: ', packet)
+                this.handlers.get(packet.command)?.handle(packet)
             }
+
+            // 订阅Offer信令消息
+            this.subscribeHandler(Command.OFFER, {
+                handle: async (packet: Packet<unknown>) => {
+                    if (packet.command === Command.OFFER) {
+                        // 将Offer存储在全局状态中
+                        const videoCallStore = useVideoCallStore()
+                        videoCallStore.setOfferMessage(packet as Packet<Offer>)
+
+                        // 路由到 videoCall
+                        router.push({ name: 'videoCall' })
+                    }
+                },
+            })
         },
 
         // 发送消息
-        sendMessage(message: Message<unknown>) {
+        sendMessage(packet: Packet<unknown>) {
             if (!this.websocket) {
                 console.error('websocket not connected')
                 return
             }
 
-            this.websocket.send(JSON.stringify(message))
+            this.websocket.send(JSON.stringify(packet))
         },
 
-        // 订阅消息
-        subscribeHandler(type: string, handler: MessageHandler<unknown>) {
+        // 订阅指定类型的消息
+        subscribeHandler(type: number, handler: MessageHandler<unknown>) {
             this.handlers.set(type, handler)
         },
 
-        // 取消订阅消息
-        unsubscribeHandler(type: string) {
+        // 取消订阅指定类型消息
+        unsubscribeHandler(type: number) {
             this.handlers.delete(type)
         },
     },

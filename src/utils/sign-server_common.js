@@ -1,10 +1,10 @@
-const WebSocket = require('ws')
+import { Server } from 'ws'
 
 // 用户id和连接对象的映射
 const userIdToClientMap = new Map()
 
 // 创建 WebSocket 服务器，监听 8080 端口
-const wss = new WebSocket.Server({ port: 8080 })
+const wss = new Server({ port: 8080 })
 
 wss.on('connection', (ws, req) => {
     // 获取路径上的userId，并和连接对象绑定

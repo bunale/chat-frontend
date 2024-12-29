@@ -1,17 +1,36 @@
-interface Message<T> {
-    scene: string
-    data: MessageData<T>
+/*
+    所有的消息相关的类型
+*/
+interface Packet<T> {
+    command: number
+    message: T
 }
 
-interface MessageData<T> {
-    sign: string
-    from: number
-    to: number
-    data: T
+interface Offer {
+    from: string
+    to: string
+    data: RTCSessionDescriptionInit
+}
+
+interface Answer {
+    from: string
+    to: string
+    data: RTCSessionDescriptionInit
+}
+
+interface Candidate {
+    from: string
+    to: string
+    data: RTCIceCandidate
+}
+
+interface UserMessage {
+    conversationId: number
+    content: string
 }
 
 interface MessageHandler<T> {
-    handle(data: Message<T>): void
+    handle(data: Packet<T>): void
 }
 
-export type { Message, MessageData, MessageHandler }
+export type { Packet, Offer, Answer, Candidate, UserMessage, MessageHandler }
