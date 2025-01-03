@@ -23,7 +23,42 @@
     </van-form>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+    .van-form {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 24px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .van-cell-group {
+        margin-bottom: 24px;
+    }
+
+    .van-button {
+        background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+        border: none;
+        font-weight: bold;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.4);
+        }
+    }
+
+    body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+</style>
 <script lang="ts" setup>
     import { ref } from 'vue'
     import * as userApi from '@/api/userApi'
