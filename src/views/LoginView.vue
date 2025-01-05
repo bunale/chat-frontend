@@ -20,12 +20,17 @@
         <div style="margin: 16px">
             <van-button round block type="primary" native-type="submit"> 登录 </van-button>
         </div>
+        <div style="margin: 16px; text-align: center">
+            <router-link to="/register" style="color: #1976d2; text-decoration: none">
+                没有账号？立即注册
+            </router-link>
+        </div>
     </van-form>
 </template>
 
 <style lang="scss" scoped>
     .van-form {
-        max-width: 400px;
+        max-width: 300px;
         margin: 0 auto;
         padding: 24px;
         background: white;
@@ -62,7 +67,7 @@
 <script lang="ts" setup>
     import { ref } from 'vue'
     import * as userApi from '@/api/userApi'
-    import { UserInfo } from '@/types/user'
+    import { CurrentUser as LoginedUser } from '@/types/user'
     import { useUserStore } from '@/store/userStore'
     import { useRouter, useRoute } from 'vue-router'
     import { showToast } from 'vant'
@@ -76,12 +81,12 @@
     const onSubmit = () => {
         userApi
             .login(username.value, password.value)
-            .then((res: UserInfo) => {
+            .then((res: LoginedUser) => {
+                // 保存用户信息
                 userStore.setUser(res)
 
-                // 获取重定向地址（如果有）
+                // 获取重定向地址（如果有）,重定向到来源页面或首页
                 const redirect = route.query.redirect as string
-                // 登录成功后重定向到来源页面或首页
                 router.push(redirect || '/')
                 console.log(`login success for ${userStore.user}, redirect to ${redirect || '/'}`)
             })

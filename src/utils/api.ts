@@ -1,6 +1,13 @@
 // src/utils/api.ts
 
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
+import { useUserStore } from '@/store/userStore'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// 不需要登录即可访问的 URL
+const excludUrls = ['/user/operation/register', '/user/operation/login']
 
 class ApiService {
     private axiosInstance: AxiosInstance
@@ -12,25 +19,37 @@ class ApiService {
         })
 
         // 请求拦截器
-        // this.axiosInstance.interceptors.request.use(
-        //     (config: InternalAxiosRequestConfig) => {
-        //         // 在请求发送之前做一些处理，比如添加 token
-        //         const token = localStorage.getItem('token') // 假设 token 存储在 localStorage
-        //         if (token) {
-        //             config.headers['Authorization'] = `Bearer ${token}`
-        //         }
-        //         return config
-        //     },
-        //     (error) => {
-        //         return Promise.reject(error)
-        //     },
-        // )
+        this.axiosInstance.interceptors.request.use(
+            (config: InternalAxiosRequestConfig) => {
+                console.log('request url: ', config.url)
+                if (excludUrls.includes(config.url as string)) {
+                    return config
+                }
+
+                // 在请求发送之前做一些处理，比如添加 token
+                const userStore = useUserStore()
+                const loginedUser = userStore.getLoginedUser
+                if (!loginedUser) {
+                    // 不存在登录的用户信息，则跳转到登录页面
+                    router.push('/login')
+                }
+
+                const token = loginedUser.token
+                if (token) {
+                    config.headers['Authorization'] = `Bearer ${token}`
+                }
+                return config
+            },
+            (error) => {
+                return Promise.reject(error)
+            }
+        )
 
         // 响应拦截器
         this.axiosInstance.interceptors.response.use(
             (response: AxiosResponse) => {
                 // 处理响应数据
-                if (response.data.code === 200) {
+                if (response.data.code === '00000') {
                     return response.data.data
                 } else {
                     return Promise.reject(response.data)
@@ -40,7 +59,6 @@ class ApiService {
                 // 处理错误
                 console.log('error ', error)
                 const message = error.response?.data?.message || '网络错误'
-                console.error('API Error:', message)
                 return Promise.reject(message)
             }
         )

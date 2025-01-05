@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/store/userStore'
-// 导入相关组件
 import MainLayout from '@/components/layouts/MainLayout.vue'
 import type { RouteRecordRaw } from 'vue-router'
 import VideoCallView from '../views/VideoCallView.vue'
+
 // 扩展 RouteMeta 类型
 declare module 'vue-router' {
     interface RouteMeta {
@@ -36,15 +36,26 @@ const routes: RouteRecordRaw[] = [
                 name: 'profile',
                 component: () => import('@/views/ProfileView.vue'),
             },
+            {
+                path: '/user-search',
+                name: 'userSearch',
+                component: () => import('@/views/UserSearchView.vue'),
+            },
         ],
     },
-    // 登录页面保持独立路由
     {
         path: '/login',
         name: 'login',
         component: () => import('@/views/LoginView.vue'),
         meta: { open: true },
     },
+    {
+        path: '/register',
+        name: 'register',
+        component: () => import('@/views/RegisterView.vue'),
+        meta: { open: true },
+    },
+
     {
         path: '/chat/:userId/:avatar/:targetName',
         name: 'chat',
@@ -63,7 +74,6 @@ const router = createRouter({
     routes: routes,
 })
 
-// 路由拦截器
 router.beforeEach((to, _from, next) => {
     const userStore = useUserStore()
     console.log('beforeEach: ', to.meta.open, userStore.user)
@@ -73,4 +83,5 @@ router.beforeEach((to, _from, next) => {
         next()
     }
 })
+
 export default router

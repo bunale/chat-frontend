@@ -1,27 +1,31 @@
 import { defineStore } from 'pinia'
-import { UserInfo } from '@/types/user'
+import { CurrentUser } from '@/types/user'
 
 const USER_KEY = 'user'
 export const useUserStore = defineStore(USER_KEY, {
     state: () => {
         return {
-            user: JSON.parse(localStorage.getItem(USER_KEY) as string) as UserInfo | null,
+            user: JSON.parse(localStorage.getItem(USER_KEY) as string) as CurrentUser | null,
         }
     },
 
     getters: {
         isAdmin: (state): boolean => {
             console.log('isAdmin ' + JSON.stringify(state.user))
-            return Boolean(state.user?.roleKeys.includes('admin'))
+            return Boolean(state.user?.roles.includes('admin'))
         },
 
         getUsername: (state): string | null => {
             return state.user?.username || null
         },
+
+        getLoginedUser: (state): CurrentUser | null => {
+            return state.user || null
+        },
     },
 
     actions: {
-        setUser(user: UserInfo) {
+        setUser(user: CurrentUser) {
             this.user = user
             localStorage.setItem(USER_KEY, JSON.stringify(user))
         },

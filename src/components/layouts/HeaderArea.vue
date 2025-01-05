@@ -2,13 +2,13 @@
     <header>
         <van-row style="width: 100%">
             <van-col span="8" class="userInfo">
-                <van-image round width="35px" height="35px" :src="robot" />
-                <p class="userName">张三</p>
+                <van-image round width="35px" height="35px" :src="loginedUser.avatar" />
+                <p class="userName">{{ loginedUser.username }}</p>
             </van-col>
             <van-col span="8" class="title">
                 <p class="title">Chat</p>
             </van-col>
-            <van-col span="8" class="plus-icon">
+            <van-col span="8" class="plus-icon" @click="goToSearch">
                 <van-icon name="plus" />
             </van-col>
         </van-row>
@@ -16,7 +16,16 @@
 </template>
 
 <script lang="ts" setup>
-    import robot from '@/assets/robot.png'
+    import { useUserStore } from '@/store/userStore'
+    import { useRouter } from 'vue-router'
+
+    const userStore = useUserStore()
+    const router = useRouter()
+    const loginedUser = userStore.getLoginedUser
+
+    const goToSearch = () => {
+        router.push('/user-search')
+    }
 </script>
 
 <style lang="scss" scoped>
@@ -44,9 +53,13 @@
             padding-left: 20px;
 
             .userName {
-                font-size: 14px;
+                font-size: 12px;
                 padding-top: 10px;
-                margin-left: 8px;
+                margin-left: 4px;
+                max-width: 60px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
         }
 
