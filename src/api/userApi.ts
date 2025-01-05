@@ -1,7 +1,8 @@
-import { CurrentUser } from '@/types/user'
+import { PageResult } from '@/types/global'
+import { LoginedUser, BaseUser, GetUserPageParam } from '@/types/user'
 import { apiService } from '@/utils/api'
 
-export function login(username: string, password: string): Promise<CurrentUser> {
+export function login(username: string, password: string): Promise<LoginedUser> {
     return apiService.post('/user/operation/login', {
         username,
         password,
@@ -12,10 +13,14 @@ export function register(
     email: string,
     password: string,
     verificationCode: string
-): Promise<CurrentUser> {
+): Promise<LoginedUser> {
     return apiService.post('/user/operation/register', {
         email,
         password,
         verificationCode,
     })
+}
+
+export function getUserPage(params: GetUserPageParam): Promise<PageResult<BaseUser>> {
+    return apiService.get('/user/data/page', params)
 }

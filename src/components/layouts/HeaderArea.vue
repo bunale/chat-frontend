@@ -3,7 +3,7 @@
         <van-row style="width: 100%">
             <van-col span="8" class="userInfo">
                 <van-image round width="35px" height="35px" :src="loginedUser.avatar" />
-                <p class="userName">{{ loginedUser.username }}</p>
+                <p class="userName">{{ loginedUser.name }}</p>
             </van-col>
             <van-col span="8" class="title">
                 <p class="title">Chat</p>

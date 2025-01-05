@@ -1,18 +1,19 @@
-export interface UserInfo {
+import { PageParam } from './global'
+
+export interface BaseUser {
     userId: string
     name: string
     email: string
     avatar: string
+    roles: string[]
     status: number
-    createUser_id: string | null
-    createTime: string | null
-    lastUpdateUserId: string | null
-    lastUpdateTime: string | null
+    createTime: Date
 }
 
-export interface CurrentUser extends UserInfo {
+export interface LoginedUser extends BaseUser {
     token: string
-    refreshToken: string
-    roles: string[]
+}
+
+export interface GetUserPageParam extends PageParam {
     username: string
 }

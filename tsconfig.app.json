@@ -35,6 +35,7 @@
         "src/**/*.d.ts",
         "src/**/*.tsx",
         "src/**/*.vue",
-        "src/utils/sign-server.js"
+        "src/utils/sign-server.js",
+        "src/types/global.d.ts"
     ]
 }

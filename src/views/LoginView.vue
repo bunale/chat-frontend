@@ -67,7 +67,7 @@
 <script lang="ts" setup>
     import { ref } from 'vue'
     import * as userApi from '@/api/userApi'
-    import { CurrentUser as LoginedUser } from '@/types/user'
+    import { LoginedUser } from '@/types/user'
     import { useUserStore } from '@/store/userStore'
     import { useRouter, useRoute } from 'vue-router'
     import { showToast } from 'vant'

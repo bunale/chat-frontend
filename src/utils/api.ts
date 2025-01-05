@@ -37,6 +37,8 @@ class ApiService {
                 const token = loginedUser.token
                 if (token) {
                     config.headers['Authorization'] = `Bearer ${token}`
+                    config.headers['Cache-Control'] = 'no-cache'
+                    config.headers['Pragma'] = 'no-cache'
                 }
                 return config
             },
@@ -65,8 +67,8 @@ class ApiService {
     }
 
     // GET 请求
-    public get<T>(url: string, config?: InternalAxiosRequestConfig): Promise<T> {
-        return this.axiosInstance.get<T, T>(url, config)
+    public get<T>(url: string, params?: unknown, config?: InternalAxiosRequestConfig): Promise<T> {
+        return this.axiosInstance.get<T, T>(url, { params, ...config })
     }
 
     // POST 请求

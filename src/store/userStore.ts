@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
-import { CurrentUser } from '@/types/user'
+import { LoginedUser } from '@/types/user'
 
 const USER_KEY = 'user'
 export const useUserStore = defineStore(USER_KEY, {
     state: () => {
         return {
-            user: JSON.parse(localStorage.getItem(USER_KEY) as string) as CurrentUser | null,
+            user: JSON.parse(localStorage.getItem(USER_KEY) as string) as LoginedUser | null,
         }
     },
 
@@ -16,19 +16,20 @@ export const useUserStore = defineStore(USER_KEY, {
         },
 
         getUsername: (state): string | null => {
-            return state.user?.username || null
+            return state.user?.name || null
         },
 
-        getLoginedUser: (state): CurrentUser | null => {
+        getLoginedUser: (state): LoginedUser | null => {
             return state.user || null
         },
     },
 
     actions: {
-        setUser(user: CurrentUser) {
+        setUser(user: LoginedUser) {
             this.user = user
             localStorage.setItem(USER_KEY, JSON.stringify(user))
         },
+
         clearUser() {
             console.log('clear user', this.user)
             this.user = null
