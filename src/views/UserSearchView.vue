@@ -1,14 +1,14 @@
 <template>
-    <div class="user-search-container">
+    <div class="contact-list-container">
         <div class="fixed-wrapper">
-            <van-nav-bar left-text="返回" left-arrow @click-left="goBack" />
             <van-search
                 v-model="searchText"
-                placeholder="请输入用户名"
+                placeholder="搜索"
                 @update:model-value="handleSearch"
             />
         </div>
 
+        <!-- 用户列表 -->
         <div class="list-wrapper">
             <van-list
                 v-model:loading="loading"
@@ -30,8 +30,17 @@
                             width="40px"
                             height="40px"
                             :src="user.avatar"
-                            style="margin-right: 10px"
+                            style="margin: 0 20px 0"
                         />
+                    </template>
+                    <template #right-icon>
+                        <van-button
+                            v-if="!user.friendFlag"
+                            size="small"
+                            @click="handleAddFriend(user)"
+                            style="margin-right: 20px"
+                            >添加好友</van-button
+                        >
                     </template>
                 </van-cell>
             </van-list>
@@ -40,18 +49,16 @@
 </template>
 
 <script lang="ts" setup>
-    import { ref } from 'vue'
-    import { useRouter } from 'vue-router'
+    import { ref, onMounted } from 'vue'
     import { showToast } from 'vant'
     import { getUserPage } from '@/api/userApi'
-    import type { BaseUser } from '@/types/user'
-    import { onMounted } from 'vue'
+    import { addFriend } from '@/api/friendshipApi'
+    import type { UserPageVO } from '@/types/user'
 
-    const router = useRouter()
     const searchText = ref('')
     const loading = ref(false)
     const finished = ref(false)
-    const userList = ref<BaseUser[]>([])
+    const userList = ref<UserPageVO[]>([])
     const pageNum = ref(1)
     const pageSize = ref(10)
     const immediateCheck = ref(false)
@@ -61,16 +68,23 @@
         onLoad()
     })
 
-    const goBack = () => {
-        router.back()
-    }
-
     const handleSearch = () => {
         console.log('handleSearch')
         pageNum.value = 1
         userList.value = []
         finished.value = false
         onLoad()
+    }
+
+    const handleAddFriend = (user: UserPageVO) => {
+        console.log('handleAddFriend', user)
+        addFriend({ receiver: user.userId, remark: 'hahaha' })
+            .then(() => {
+                showToast('添加好友成功')
+            })
+            .catch(() => {
+                showToast('添加好友失败')
+            })
     }
 
     const onLoad = async () => {
@@ -108,8 +122,19 @@
 </script>
 
 <style lang="scss" scoped>
-    .user-search-container {
+    .contact-list-container {
         padding-top: 0;
+
+        .van-collapse {
+            margin: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .van-collapse-item__content {
+            padding: 0;
+        }
+
         min-height: 100vh;
         background-color: #f7f8fa;
         display: flex;

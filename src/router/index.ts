@@ -17,11 +17,6 @@ const routes: RouteRecordRaw[] = [
         component: MainLayout,
         children: [
             {
-                path: '',
-                name: 'home',
-                component: () => import('@/views/HomeView.vue'),
-            },
-            {
                 path: 'message',
                 name: 'message',
                 component: () => import('@/views/MessageView.vue'),
@@ -35,6 +30,11 @@ const routes: RouteRecordRaw[] = [
                 path: 'profile',
                 name: 'profile',
                 component: () => import('@/views/ProfileView.vue'),
+            },
+            {
+                path: '/contactList',
+                name: 'contactList',
+                component: () => import('@/views/ContactList.vue'),
             },
             {
                 path: '/user-search',
