@@ -44,6 +44,17 @@ const routes: RouteRecordRaw[] = [
         ],
     },
     {
+        path: '/chat/:userId/:avatar/:targetName',
+        name: 'chat',
+        component: () => import('@/views/ChatView.vue'),
+        meta: { open: true },
+    },
+    {
+        path: '/video-call',
+        name: 'videoCall',
+        component: VideoCallView,
+    },
+    {
         path: '/login',
         name: 'login',
         component: () => import('@/views/LoginView.vue'),
@@ -55,17 +66,17 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/RegisterView.vue'),
         meta: { open: true },
     },
-
     {
-        path: '/chat/:userId/:avatar/:targetName',
-        name: 'chat',
-        component: () => import('@/views/ChatView.vue'),
+        path: '/401',
+        name: '401',
+        component: () => import('@/views/error/401.vue'),
         meta: { open: true },
     },
     {
-        path: '/video-call',
-        name: 'videoCall',
-        component: VideoCallView,
+        path: '/404',
+        name: '404',
+        component: () => import('@/views/error/404.vue'),
+        meta: { open: true },
     },
 ]
 
