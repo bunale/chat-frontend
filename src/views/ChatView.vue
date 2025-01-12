@@ -3,7 +3,7 @@
         <div class="chat-body">
             <!-- 顶部标题栏 -->
             <div class="chat-header">
-                <van-nav-bar :title="targetName" left-arrow @click-left="goBack" />
+                <van-nav-bar :title="getTitle()" left-arrow @click-left="goBack" />
             </div>
 
             <!-- 聊天记录区域 -->
@@ -11,10 +11,13 @@
                 <div
                     v-for="(msg, index) in messageHistory"
                     :key="index"
-                    :class="['message-item', msg.isSelf ? 'self' : 'other']"
+                    :class="[
+                        'message-item',
+                        msg.senderId === userStore.getLoginedUser.userId ? 'self' : 'other',
+                    ]"
                 >
                     <div class="avatar">
-                        <van-image :src="msg.avatar" round width="40" height="40" />
+                        <van-image :src="getAvatar(msg)" round width="40" height="40" />
                     </div>
                     <div class="message-bubble">{{ msg.content }}</div>
                 </div>
@@ -42,7 +45,7 @@
                         size="mini"
                         type="primary"
                         class="send-btn"
-                        @click="sendMessage"
+                        @click="handleSendMessage"
                         >发送</van-button
                     >
                     <van-button v-else size="mini" class="plus-btn" @click="showActionSheet">
@@ -79,17 +82,63 @@
     import { ref, onMounted, nextTick, computed } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
     import { useVideoCallStore } from '@/store/useVideoCallStore'
-    import cat from '@/assets/cat.png'
-    import robot from '@/assets/robot.png'
+    import { useConversationStore } from '@/store/conversationStore'
+    import { useUserStore } from '@/store/userStore'
+    import { getConversationMessagePage, sendMessage } from '@/api/conversationMessageApi'
+    import { ConversationMessage } from '@/types/conversationMessage'
 
     const videoCallStore = useVideoCallStore()
     const router = useRouter()
     const route = useRoute()
+    const userStore = useUserStore()
+
+    // 会话信息
+    const conversationId = route.params.conversationId as unknown as number
+    const conversation = useConversationStore().getConversationById(conversationId)
+
+    // 会话消息
+    const pageNum = ref(1)
+    const pageSize = ref(20)
+    const messageHistory = ref<ConversationMessage[]>([])
+    // 获取会话消息
+    const handleGetConversationMessage = () => {
+        getConversationMessagePage({
+            conversationId,
+            pageNum: pageNum.value,
+            pageSize: pageSize.value,
+        }).then((res) => {
+            res.records.forEach((msg) => {
+                messageHistory.value.unshift(msg)
+            })
+            pageNum.value++
+            console.log('messageHistory', messageHistory.value)
+        })
+    }
+    // 发送新消息
+    const handleSendMessage = () => {
+        if (!inputMessage.value.trim()) return
+
+        sendMessage({
+            conversationId: conversationId,
+            type: 1,
+            content: inputMessage.value,
+        }).then(() => {
+            pageNum.value = 1
+            messageHistory.value = []
+            handleGetConversationMessage()
+
+            inputMessage.value = ''
+            scrollToBottom()
+        })
+    }
+    const getAvatar = (msg: ConversationMessage): string => {
+        return conversation.users.filter((user) => user.userId === msg.senderId)[0]?.avatar
+    }
+
     const chatContent = ref<HTMLElement | null>(null)
     const inputMessage = ref('')
     const targetUserId = ref('')
-    const avatar = ref('')
-    const targetName = ref('')
+
     // 操作菜单相关
     const showActions = ref(false)
     const actions = [
@@ -162,166 +211,30 @@
         showActions.value = true
     }
 
-    // 聊天记录
-    const messageHistory = ref([
-        {
-            content: '你好啊！',
-            isSelf: false,
-            avatar: cat,
-            time: '14:30',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '最近在忙什么呢？',
-            isSelf: true,
-            avatar: robot,
-            time: '14:31',
-        },
-        {
-            content: '在学习Vue和TypeScript',
-            isSelf: false,
-            avatar: cat,
-            time: '14:32',
-        },
-    ])
-
-    // 发送消息
-    const sendMessage = () => {
-        if (!inputMessage.value.trim()) return
-
-        messageHistory.value.push({
-            content: inputMessage.value,
-            isSelf: true,
-            avatar: robot,
-            time: new Date().toLocaleTimeString('zh-CN', {
-                hour: '2-digit',
-                minute: '2-digit',
-            }),
-        })
-
-        inputMessage.value = ''
-        scrollToBottom()
-    }
-
     // 滚动到底部
     const scrollToBottom = async () => {
         await nextTick()
-        if (chatContent.value) {
-            chatContent.value.scrollTop = chatContent.value.scrollHeight
+        if (!chatContent.value) {
+            console.error('chatContent ref is not bound')
+            return
         }
+
+        console.log('Scroll info:', {
+            scrollHeight: chatContent.value.scrollHeight,
+            clientHeight: chatContent.value.clientHeight,
+            scrollTop: chatContent.value.scrollTop,
+        })
+
+        // 使用平滑滚动
+        chatContent.value.scrollTo({
+            top: chatContent.value.scrollHeight,
+            behavior: 'smooth',
+        })
+
+        // 添加延迟确保滚动完成
+        setTimeout(() => {
+            chatContent.value.scrollTop = chatContent.value.scrollHeight
+        }, 300)
     }
 
     // 返回上一页
@@ -329,11 +242,18 @@
         router.back()
     }
 
+    const getTitle = () => {
+        if (conversation.title) {
+            return conversation.title
+        }
+
+        return conversation.users.filter(
+            (user) => user.userId !== userStore.getLoginedUser.userId
+        )[0].username
+    }
     onMounted(() => {
-        console.log('router.currentRoute.value.params: ' + JSON.stringify(route.params))
-        targetUserId.value = route.params.userId as string
-        avatar.value = route.params.avatar as string
-        targetName.value = route.params.targetName as string
+        console.log('conversation: ' + conversation.conversationId)
+        handleGetConversationMessage()
         scrollToBottom()
     })
 </script>

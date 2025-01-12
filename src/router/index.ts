@@ -49,7 +49,7 @@ const routes: RouteRecordRaw[] = [
         ],
     },
     {
-        path: '/chat/:userId/:avatar/:targetName',
+        path: '/chat/:conversationId',
         name: 'chat',
         component: () => import('@/views/ChatView.vue'),
         meta: { open: true },

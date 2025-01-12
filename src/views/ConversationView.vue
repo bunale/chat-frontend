@@ -2,61 +2,89 @@
     <div class="message-list">
         <div
             class="message-item"
-            @click="goChat(item.userId, item.avatar, item.name)"
-            v-for="(item, index) in messageList"
+            @click="goChat(item)"
+            v-for="(item, index) in conversationList"
             :key="index"
         >
             <div class="avatar">
-                <van-image :src="item.avatar" round width="50" height="50" />
+                <van-image :src="getAvatar(item)" round width="50" height="50" />
             </div>
             <div class="content">
-                <div class="name">{{ item.name }}</div>
-                <div class="message">{{ item.lastMessage }}</div>
+                <div class="name">{{ getTitle(item) }}</div>
+                <div class="message">{{ item.lastMessageContent }}</div>
             </div>
             <div class="right">
-                <div class="time">{{ item.time }}</div>
-                <div class="badge" v-if="item.unread">{{ item.unread }}</div>
+                <div class="time">{{ formatRelativeTime(item.lastMessageTime) }}</div>
+                <!-- <div class="badge" v-if="item.unread">{{ item.unread }}</div> -->
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-    import { ref } from 'vue'
+    import { onMounted, ref } from 'vue'
     import { useRouter } from 'vue-router'
-    import cat from '@/assets/cat.png'
-    import dog from '@/assets/dog.png'
+    import { Conversation } from '@/types/conversation'
+    import { getConversationPage } from '@/api/conversationApi'
+    import { ContactList } from 'vant'
+    import { useUserStore } from '@/store/userStore'
+    import { formatRelativeTime } from '@/utils/date'
+    import { useConversationStore } from '@/store/conversationStore'
+
+    const conversationStore = useConversationStore()
+    const userStore = useUserStore()
     const router = useRouter()
 
-    const messageList = ref([
-        {
-            id: 2,
-            userId: '222',
-            name: 'User',
-            avatar: cat,
-            lastMessage: '你好，最近怎么样？',
-            time: '14:30',
-            unread: 2,
-        },
-        {
-            id: 4,
-            userId: '222',
-            name: '李四',
-            avatar: dog,
-            lastMessage: '周末要一起出去玩吗？',
-            time: '昨天',
-            unread: 0,
-        },
-        // 可以添加更多消息项...
-    ])
+    const pageNum = ref(1)
+    const pageSize = ref(10)
+    const loading = ref(false)
+    const finished = ref(false)
 
-    const goChat = (userId: string, avatar: string, name: string) => {
-        console.log('goChat: ' + userId + ', ' + avatar + ', ' + name)
-        router.push({
-            name: 'chat',
-            params: { userId: userId, avatar: avatar, targetName: name },
+    const conversationList = ref<Conversation[]>([])
+
+    const getConversationData = () => {
+        loading.value = true
+        getConversationPage({
+            pageNum: pageNum.value,
+            pageSize: pageSize.value,
+            conversationType: null,
+        }).then((res) => {
+            conversationList.value = [...conversationList.value, ...res.records]
+            loading.value = false
+
+            conversationStore.setConversations(conversationList.value)
+            if (ContactList.length >= res.totalRow) {
+                finished.value = true
+            }
         })
     }
+
+    const goChat = (conversation: Conversation) => {
+        console.log('goChat: ' + conversation.conversationId)
+        router.push({
+            name: 'chat',
+            params: { conversationId: conversation.conversationId },
+        })
+    }
+
+    const getTitle = (conversation: Conversation) => {
+        if (conversation.title) {
+            return conversation.title
+        }
+
+        return conversation.users.filter(
+            (user) => user.userId !== userStore.getLoginedUser.userId
+        )[0].username
+    }
+    const getAvatar = (conversation: Conversation) => {
+        return conversation.users.filter(
+            (user) => user.userId !== userStore.getLoginedUser.userId
+        )[0].avatar
+    }
+
+    onMounted(() => {
+        getConversationData()
+    })
 </script>
 
 <style lang="scss" scoped>
