@@ -1,5 +1,4 @@
-import { PageResult } from '@/types/global'
-import { LoginedUser, BaseUser, GetUserPageParam } from '@/types/user'
+import { LoginedUser, GetUserPageParam, UserPageVO } from '@/types/user'
 import { apiService } from '@/utils/api'
 
 export function login(username: string, password: string): Promise<LoginedUser> {
@@ -21,6 +20,6 @@ export function register(
     })
 }
 
-export function getUserPage(params: GetUserPageParam): Promise<PageResult<BaseUser>> {
+export function getUserPage(params: GetUserPageParam): Promise<PageResult<UserPageVO>> {
     return apiService.get('/user/data/page', params)
 }

@@ -11,7 +11,7 @@
         <!-- 底部导航栏 -->
         <footer>
             <van-tabbar v-model="active" route>
-                <van-tabbar-item icon="chat-o" to="/message">消息</van-tabbar-item>
+                <van-tabbar-item icon="chat-o" to="/conversation">聊天</van-tabbar-item>
                 <van-tabbar-item icon="friends-o" to="/contactList">联系人</van-tabbar-item>
                 <van-tabbar-item icon="user-o" to="/profile">我的</van-tabbar-item>
             </van-tabbar>

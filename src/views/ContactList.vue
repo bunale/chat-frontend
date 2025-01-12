@@ -183,7 +183,6 @@
 
         :deep(.van-cell__title) {
             text-align: left;
-            padding-left: 20px;
         }
     }
 </style>

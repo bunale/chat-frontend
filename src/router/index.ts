@@ -17,9 +17,14 @@ const routes: RouteRecordRaw[] = [
         component: MainLayout,
         children: [
             {
-                path: 'message',
-                name: 'message',
-                component: () => import('@/views/MessageView.vue'),
+                path: '',
+                name: 'home',
+                redirect: '/conversation',
+            },
+            {
+                path: 'conversation',
+                name: 'conversation',
+                component: () => import('@/views/ConversationView.vue'),
             },
             {
                 path: 'tools',
