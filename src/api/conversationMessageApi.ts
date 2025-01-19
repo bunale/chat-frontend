@@ -5,7 +5,7 @@ import {
 } from '@/types/conversationMessage'
 import { apiService } from '@/utils/api'
 
-export function sendMessage(param: SendMessageParam): Promise<void> {
+export function sendMessage(param: SendMessageParam): Promise<ConversationMessage> {
     return apiService.post('/message/send', param)
 }
 

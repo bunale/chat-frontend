@@ -24,7 +24,7 @@
             </div>
 
             <!-- 底部输入区域 -->
-            <div class="chat-footer fixed-bottom">
+            <div class="chat-footer">
                 <div class="input-wrapper">
                     <div class="tools">
                         <van-icon name="volume-o" size="24" color="#666" />
@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-    import { ref, onMounted, nextTick, computed } from 'vue'
+    import { ref, onMounted, nextTick, computed, onUnmounted } from 'vue'
     import { useRouter, useRoute } from 'vue-router'
     import { useVideoCallStore } from '@/store/useVideoCallStore'
     import { useConversationStore } from '@/store/conversationStore'
@@ -100,20 +100,62 @@
     const pageNum = ref(1)
     const pageSize = ref(20)
     const messageHistory = ref<ConversationMessage[]>([])
+    const isLoading = ref(false)
+    const isFinished = ref(false)
+    const scrollTop = ref(0)
+    const prevScrollHeight = ref(0)
+
     // 获取会话消息
-    const handleGetConversationMessage = () => {
-        getConversationMessagePage({
-            conversationId,
-            pageNum: pageNum.value,
-            pageSize: pageSize.value,
-        }).then((res) => {
-            res.records.forEach((msg) => {
-                messageHistory.value.unshift(msg)
+    const handleGetConversationMessage = async () => {
+        if (isLoading.value || isFinished.value) return
+
+        isLoading.value = true
+        try {
+            const res = await getConversationMessagePage({
+                conversationId,
+                pageNum: pageNum.value,
+                pageSize: pageSize.value,
             })
-            pageNum.value++
-            console.log('messageHistory', messageHistory.value)
-        })
+
+            if (res.totalPage >= pageNum.value) {
+                // 记录当前滚动高度
+                if (chatContent.value) {
+                    prevScrollHeight.value = chatContent.value.scrollHeight
+                }
+
+                // 将新消息插入到数组前面
+                res.records.forEach((msg) => {
+                    messageHistory.value.unshift(msg)
+                })
+                pageNum.value++
+
+                // 保持滚动位置
+                nextTick(() => {
+                    if (chatContent.value) {
+                        chatContent.value.scrollTop =
+                            chatContent.value.scrollHeight - prevScrollHeight.value
+                    }
+                })
+            } else {
+                isFinished.value = true
+            }
+        } finally {
+            isLoading.value = false
+        }
     }
+
+    const handleScroll = () => {
+        if (!chatContent.value) return
+
+        const { scrollTop: currentScrollTop } = chatContent.value
+        scrollTop.value = currentScrollTop
+
+        // 当滚动到顶部附近时加载更多
+        if (currentScrollTop < 100 && !isLoading.value && !isFinished.value) {
+            handleGetConversationMessage()
+        }
+    }
+
     // 发送新消息
     const handleSendMessage = () => {
         if (!inputMessage.value.trim()) return
@@ -122,15 +164,14 @@
             conversationId: conversationId,
             type: 1,
             content: inputMessage.value,
-        }).then(() => {
-            pageNum.value = 1
-            messageHistory.value = []
-            handleGetConversationMessage()
+        }).then((res) => {
+            messageHistory.value.push(res)
 
             inputMessage.value = ''
             scrollToBottom()
         })
     }
+
     const getAvatar = (msg: ConversationMessage): string => {
         return conversation.users.filter((user) => user.userId === msg.senderId)[0]?.avatar
     }
@@ -251,10 +292,22 @@
             (user) => user.userId !== userStore.getLoginedUser.userId
         )[0].username
     }
+
     onMounted(() => {
         console.log('conversation: ' + conversation.conversationId)
         handleGetConversationMessage()
         scrollToBottom()
+
+        // 添加滚动事件监听
+        if (chatContent.value) {
+            chatContent.value.addEventListener('scroll', handleScroll)
+        }
+    })
+
+    onUnmounted(() => {
+        if (chatContent.value) {
+            chatContent.value.removeEventListener('scroll', handleScroll)
+        }
     })
 </script>
 
@@ -278,8 +331,6 @@
     }
 
     .chat-header {
-        position: fixed;
-        top: 0;
         flex-shrink: 0;
         width: $maxWidth;
         height: $headerHeight;
@@ -296,7 +347,7 @@
         flex: 1;
         width: $maxWidth;
         overflow-y: auto;
-        padding: calc($headerHeight + 16px) 16px calc($footerHeight) 16px;
+        padding: 10px;
     }
 
     .message-item {
