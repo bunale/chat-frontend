@@ -14,6 +14,7 @@ export interface UserPageVO extends BaseUser {
 
 export interface LoginedUser extends BaseUser {
     token: string
+    expiredTime: Date
 }
 
 export interface GetUserPageParam extends PageParam {
