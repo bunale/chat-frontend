@@ -178,7 +178,6 @@
 
     const chatContent = ref<HTMLElement | null>(null)
     const inputMessage = ref('')
-    const targetUserId = ref('')
 
     // 操作菜单相关
     const showActions = ref(false)
@@ -241,7 +240,10 @@
 
     const handleVideoCall = () => {
         showActions.value = false // 关闭action sheet
-        videoCallStore.setTargetUserId(targetUserId.value)
+
+        let targetUserId = conversation.users.filter((x) => x.userId != userStore.user.userId)[0]
+            .userId
+        videoCallStore.setTargetUserId(targetUserId)
         router.push({
             name: 'videoCall',
         })

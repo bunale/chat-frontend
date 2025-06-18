@@ -94,8 +94,10 @@ router.beforeEach((to, _from, next) => {
     const userStore = useUserStore()
     console.log('beforeEach: ', !to.meta.open, userStore.user)
 
-    const expiredTime = new Date(userStore.user.expiredTime)
-    if (!to.meta.open && (userStore.user == null || expiredTime < new Date())) {
+    if (
+        !to.meta.open &&
+        (userStore.user == null || new Date(userStore.user.expiredTime) < new Date())
+    ) {
         next({ name: 'login' })
     } else {
         next()

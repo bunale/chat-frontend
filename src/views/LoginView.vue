@@ -69,12 +69,14 @@
     import * as userApi from '@/api/userApi'
     import { LoginedUser } from '@/types/user'
     import { useUserStore } from '@/store/userStore'
+    import { useWebScoketStore } from '@/store/useWebsocketStore'
     import { useRouter, useRoute } from 'vue-router'
     import { showToast } from 'vant'
 
     const username = ref('')
     const password = ref('')
     const userStore = useUserStore()
+    const websocketStore = useWebScoketStore()
     const router = useRouter()
     const route = useRoute()
 
@@ -84,6 +86,8 @@
             .then((res: LoginedUser) => {
                 // 保存用户信息
                 userStore.setUser(res)
+
+                websocketStore.connect()
 
                 // 获取重定向地址（如果有）,重定向到来源页面或首页
                 const redirect = route.query.redirect as string

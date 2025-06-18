@@ -22,24 +22,26 @@ export const useWebScoketStore = defineStore('websocket', {
             }
 
             console.log('websocket connecting to url: ' + import.meta.env.VITE_WEBSOCKET_BASE_URL)
-            this.websocket = new WebSocket(import.meta.env.VITE_WEBSOCKET_BASE_URL)
-            this.websocket.onopen = () => {
+            const ws = new WebSocket(import.meta.env.VITE_WEBSOCKET_BASE_URL)
+            this.websocket = ws
+            ws.onopen = () => {
+                console.log('send onopen message')
                 this.sendMessage({
                     command: Command.LOGIN,
                     message: {
-                        userId: userStore.user?.userId,
+                        token: userStore.user?.token,
                     },
                 })
                 console.log('websocket open')
             }
-            this.websocket.onclose = () => {
+            ws.onclose = () => {
                 console.log('websocket close')
             }
-            this.websocket.onerror = (event) => {
+            ws.onerror = (event) => {
                 console.log('websocket error: ' + JSON.stringify(event))
             }
             // 处理接收到的消息
-            this.websocket.onmessage = (event) => {
+            ws.onmessage = (event) => {
                 const packet: Packet<unknown> = JSON.parse(event.data)
                 console.log('receive data: ', packet)
                 this.handlers.get(packet.command)?.handle(packet)
