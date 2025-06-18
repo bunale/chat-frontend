@@ -64,7 +64,6 @@
     const initWebRTC = async () => {
         try {
             console.log('init WebRTC')
-            console.log('videoCallStore: ', JSON.stringify(videoCallStore))
 
             // 如果有 offerMessage，说明是被呼叫方
             if (videoCallStore.offerMessage) {
